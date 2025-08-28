@@ -22,3 +22,23 @@ export interface User {
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
 }
+
+export interface Service {
+    id?: number;
+    name: string;
+    description: string;
+    price: number;
+    status: string;
+}
+
+export interface Booking {
+    id: number;
+    user_id: number;
+    service_id: number;
+    booking_date: string;
+    status: string;
+    notes?: string;
+    created_at: string;
+    user?: User;
+    service?: Service;
+}

@@ -13,7 +13,7 @@ class ServiceService
      */
     public function getActiveServices(): Collection
     {
-        return Service::where('status', 'active')->get();
+        return Service::where('status', 'active')->latest()->get();
     }
 
     /**
@@ -21,7 +21,7 @@ class ServiceService
      */
     public function getAllServices(): Collection
     {
-        return Service::all();
+        return Service::latest()->get();
     }
 
     /**

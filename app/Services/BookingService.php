@@ -14,7 +14,7 @@ class BookingService
      */
     public function getUserBookings(User $user): Collection
     {
-        return $user->bookings()->with('service')->get();
+        return $user->bookings()->with('service')->latest()->get();
     }
 
     /**
@@ -22,7 +22,7 @@ class BookingService
      */
     public function getAllBookings(): Collection
     {
-        return Booking::with(['user', 'service'])->get();
+        return Booking::with(['user', 'service'])->latest()->get();
     }
 
     /**
