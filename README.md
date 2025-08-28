@@ -23,7 +23,7 @@ The Service Booking System is designed to facilitate booking services online. It
 
 1. **Clone the repository**
    ```
-   git clone https://github.com/Zidny000/Service-test.git
+   git clone https://github.com/Zidny000/Service-Booking-System.git
    cd service-booking-system
    ```
 
@@ -47,4 +47,168 @@ The Service Booking System is designed to facilitate booking services online. It
    DB_DATABASE=
    DB_USERNAME=
    DB_PASSWORD=
-  
+   ```
+
+5. **Run migrations and seed the database**
+   ```
+   php artisan migrate
+   php artisan db:seed
+   ```
+
+6. **Build frontend assets**
+   ```
+   npm run dev    # For development with hot reload
+   # OR
+   npm run build  # For production
+   ```
+
+7. **Start the development server**
+   ```
+   php artisan serve
+   ```
+
+8. **Access the application**
+   Open your browser and go to http://localhost:8000
+
+## API Testing Instructions
+
+The Service Booking System provides a comprehensive set of API endpoints that can be tested using tools like Postman or cURL.
+
+### Authentication
+
+#### Register a new user
+```
+POST /api/register
+
+Body:
+{
+    "name": "Test User",
+    "email": "test@example.com",
+    "password": "password",
+    "password_confirmation": "password"
+}
+```
+
+#### Login to get access token
+```
+POST /api/login
+
+Body:
+{
+    "email": "test@example.com",
+    "password": "password"
+}
+
+Response includes:
+{
+    "token": "YOUR_ACCESS_TOKEN"
+}
+```
+
+### Using Authentication Token
+
+For all authenticated endpoints, include the token in the request header:
+```
+Authorization: Bearer YOUR_ACCESS_TOKEN
+```
+
+### Customer Endpoints
+
+#### Get user information
+```
+GET /api/get-user
+```
+
+#### Get all services
+```
+GET /api/services
+```
+
+#### Create a new booking
+```
+POST /api/bookings
+
+Body:
+{
+    "service_id": 1,
+    "booking_date": "2025-09-01T10:00:00",
+    "notes": "Optional notes about the booking"
+}
+```
+
+#### Get user bookings
+```
+GET /api/bookings
+```
+
+#### Logout (revoke token)
+```
+POST /api/logout
+```
+
+### Admin Endpoints
+
+The following endpoints require an admin user:
+
+#### Get all services (admin view)
+```
+GET /api/admin/services
+```
+
+#### Create a new service
+```
+POST /api/services
+
+Body:
+{
+    "name": "Service Name",
+    "description": "Service Description",
+    "price": 99.99,
+    "status": "active"
+}
+```
+
+#### Update a service
+```
+PUT /api/services/{id}
+
+Body:
+{
+    "name": "Updated Service Name",
+    "description": "Updated Description",
+    "price": 149.99,
+    "status": "active"
+}
+```
+
+#### Delete a service
+```
+DELETE /api/services/{id}
+```
+
+#### Get all bookings (admin view)
+```
+GET /api/admin/bookings
+```
+
+#### Update booking status
+```
+PUT /api/admin/bookings/{id}/status
+
+Body:
+{
+    "status": "confirmed"  // Options: pending, confirmed, cancelled, completed
+}
+```
+
+## Running Tests
+
+The application includes a test suite built with Pest PHP. To run the tests:
+
+```
+php artisan test
+```
+
+## License
+
+This project is open-sourced software.
