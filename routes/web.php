@@ -3,6 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+// Health check route for Render
+Route::get('/health-check', function () {
+    return response()->json(['status' => 'ok']);
+});
+
 // Public routes
 Route::get('/', function () {
     return Inertia::render('Dashboard');

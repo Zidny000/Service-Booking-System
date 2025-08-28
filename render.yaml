@@ -1,0 +1,57 @@
+services:
+  - type: web
+    name: qtec-service-booking
+    env: docker
+    plan: free
+    healthCheckPath: /health-check
+    buildCommand: docker build -t qtec-service-booking .
+    # The following environment variables are examples. You'll need to set these in the Render dashboard
+    envVars:
+      - key: APP_KEY
+        generateValue: true
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromService:
+          type: pserv
+          name: pgsql
+          property: host
+      - key: DB_PORT
+        fromService:
+          type: pserv
+          name: pgsql
+          property: port
+      - key: DB_DATABASE
+        fromService:
+          type: pserv
+          name: pgsql
+          property: database
+      - key: DB_USERNAME
+        fromService:
+          type: pserv
+          name: pgsql
+          property: username
+      - key: DB_PASSWORD
+        fromService:
+          type: pserv
+          name: pgsql
+          property: password
+
+  # Database service
+  - type: pserv
+    name: pgsql
+    plan: free
+    env: docker
+    disk:
+      name: pgsql-data
+      mountPath: /var/lib/postgresql/data
+      sizeGB: 1
+    envVars:
+      - key: POSTGRES_ROOT_PASSWORD
+        generateValue: true
+      - key: POSTGRES_DB
+        value: qtec_service_booking
+      - key: POSTGRES_USER
+        value: laravel
+      - key: POSTGRES_PASSWORD
+        generateValue: true
