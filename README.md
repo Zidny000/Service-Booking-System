@@ -18,3 +18,33 @@ The Service Booking System is designed to facilitate booking services online. It
 - **Frontend**: React 19 with TypeScript and Tailwind CSS 4
 - **Authentication**: Laravel Sanctum for API token authentication
 - **Testing**: Pest PHP for feature and unit testing
+
+## Setup Instructions
+
+1. **Clone the repository**
+   ```
+   git clone https://github.com/Zidny000/Service-test.git
+   cd service-booking-system
+   ```
+
+2. **Install dependencies**
+   ```
+   composer install
+   npm install
+   ```
+
+3. **Environment configuration**
+   ```
+   cp .env.example .env
+   php artisan key:generate
+   ```
+
+4. **Configure your database in the .env file**
+   ```
+   DB_CONNECTION=
+   DB_HOST=
+   DB_PORT=
+   DB_DATABASE=
+   DB_USERNAME=
+   DB_PASSWORD=
+  
