@@ -3,7 +3,8 @@ FROM richarvey/nginx-php-fpm:latest
 # Install additional dependencies
 RUN apk --no-cache add \
     nodejs \
-    npm
+    npm \
+    postgresql-client
 
 WORKDIR /var/www/html
 
@@ -42,10 +43,16 @@ ENV QUEUE_CONNECTION database
 # Allow composer to run as root
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
+# Copy Nginx configuration
+COPY nginx-site.conf /etc/nginx/sites-available/default.conf
+
 # Script to deploy Laravel on container start
 COPY scripts/00-laravel-deploy.sh /var/scripts/
 
 # Make the script executable
 RUN chmod +x /var/scripts/00-laravel-deploy.sh
+
+# Make sure PHP-FPM uses TCP instead of socket
+RUN sed -i 's#listen = /var/run/php-fpm.sock#listen = 127.0.0.1:9000#g' /usr/local/etc/php-fpm.d/www.conf
 
 CMD ["/start.sh"]

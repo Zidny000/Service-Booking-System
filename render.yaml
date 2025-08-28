@@ -47,7 +47,12 @@ services:
       mountPath: /var/lib/postgresql/data
       sizeGB: 1
     envVars:
-      - key: POSTGRES_ROOT_PASSWORD
+      - key: POSTGRES_PASSWORD
+        generateValue: true
+      - key: POSTGRES_USER
+        value: laravel
+      - key: POSTGRES_DB
+        value: qtec_service_booking
         generateValue: true
       - key: POSTGRES_DB
         value: qtec_service_booking
