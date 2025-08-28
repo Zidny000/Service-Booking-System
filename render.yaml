@@ -5,6 +5,7 @@ services:
     plan: free
     healthCheckPath: /health-check
     buildCommand: docker build -t qtec-service-booking .
+    startCommand: ""  # Use the CMD from the Dockerfile
     # The following environment variables are examples. You'll need to set these in the Render dashboard
     envVars:
       - key: APP_KEY

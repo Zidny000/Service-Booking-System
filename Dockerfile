@@ -1,15 +1,33 @@
-FROM richarvey/nginx-php-fpm:latest
+FROM php:8.2-cli
 
-# Install additional dependencies
-RUN apk --no-cache add \
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    libpq-dev \
+    libzip-dev \
+    zip \
+    unzip \
     nodejs \
-    npm \
-    postgresql-client
+    npm
 
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install PHP extensions
+RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd zip
+
+# Set working directory
 WORKDIR /var/www/html
 
 # Copy project files
 COPY . .
+
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Install Composer dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-progress
@@ -21,16 +39,7 @@ RUN if [ -f "package.json" ]; then \
     fi
 
 # Set proper permissions
-RUN chown -R nginx:nginx /var/www/html \
-    && chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache
-
-# Image config
-ENV SKIP_COMPOSER 1
-ENV WEBROOT /var/www/html/public
-ENV PHP_ERRORS_STDERR 1
-ENV RUN_SCRIPTS 1
-ENV REAL_IP_HEADER 1
-ENV NGINX_WORKER_PROCESSES auto
+RUN chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Laravel config
 ENV APP_ENV production
@@ -43,16 +52,18 @@ ENV QUEUE_CONNECTION database
 # Allow composer to run as root
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
-# Copy Nginx configuration
-COPY nginx-site.conf /etc/nginx/sites-available/default.conf
-
-# Script to deploy Laravel on container start
-COPY scripts/00-laravel-deploy.sh /var/scripts/
+# Copy deploy script
+COPY scripts/00-laravel-deploy.sh /var/www/html/deploy.sh
 
 # Make the script executable
-RUN chmod +x /var/scripts/00-laravel-deploy.sh
+RUN chmod +x /var/www/html/deploy.sh
 
-# Make sure PHP-FPM uses TCP instead of socket
-RUN sed -i 's#listen = /var/run/php-fpm.sock#listen = 127.0.0.1:9000#g' /usr/local/etc/php-fpm.d/www.conf
+# Create start script
+RUN echo '#!/bin/bash\n\
+/var/www/html/deploy.sh\n\
+php -S 0.0.0.0:$PORT -t /var/www/html/public\n\
+' > /var/www/html/start.sh && \
+chmod +x /var/www/html/start.sh
 
-CMD ["/start.sh"]
+EXPOSE 8080
+CMD ["/var/www/html/start.sh"]

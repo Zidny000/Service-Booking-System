@@ -2,6 +2,12 @@
 echo "Running composer"
 composer install --no-dev --working-dir=/var/www/html
 
+# Generate application key if not set
+if [ -z "$APP_KEY" ]; then
+    echo "Generating app key..."
+    php artisan key:generate --force
+fi
+
 # Wait for the database to be ready
 echo "Waiting for database connection..."
 php -r "
